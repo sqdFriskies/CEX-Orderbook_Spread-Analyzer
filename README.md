@@ -34,24 +34,49 @@ Buy VWAP is always ≥ best ask. Sell VWAP is always ≤ best bid.
 ## Project Structure
 
 ```
-orderbook_project/
-├── orderbook.cpp      — source code
-├── orderbook.csv      — sample data (12 orders)
-└── orderbook          — compiled binary (after build)
+CEX-ORDERBOOK_SPREAD-ANALYZER/
+├── build/                  — compiled output (generated, not committed)
+├── src/
+│   ├── main.cpp            — source code
+│   └── orderbook.csv       — sample data (12 orders)
+├── .gitignore
+├── CMakeLists.txt          — build configuration
+└── README.md
 ```
 
 ---
 
 ## Build & Run
 
-**Requirements:** C++17 compiler (g++ 7+ or clang++ 5+)
+**Requirements:** CMake 3.10+, C++17 compiler (g++ 7+ or clang++ 5+)
 
 ```bash
-g++ -std=c++17 -o orderbook orderbook.cpp
+# 1. Create and enter the build directory
+mkdir build && cd build
+
+# 2. Generate build files
+cmake ..
+
+# 3. Compile
+cmake --build .
+
+# 4. Run with default CSV
 ./orderbook
+
+# 5. Or pass a custom CSV file as argument
+./orderbook /path/to/your/data.csv
 ```
 
-The CSV file must be in the same directory as the binary, or update the `FILENAME` constant in `main()`.
+### CMakeLists.txt
+
+```cmake
+cmake_minimum_required(VERSION 3.10)
+project(orderbook)
+
+set(CMAKE_CXX_STANDARD 17)
+
+add_executable(orderbook src/main.cpp)
+```
 
 ---
 
@@ -71,12 +96,19 @@ ask,100.20,8
 
 ## Configuration
 
-All parameters are constants at the top of `main()`:
+The CSV path can be passed as a command-line argument. If omitted, the program falls back to `orderbook.csv` in the working directory:
+
+```bash
+./orderbook                        # uses orderbook.csv by default
+./orderbook ../src/orderbook.csv   # relative path
+./orderbook /home/user/btc.csv     # absolute path
+```
+
+Depth window and VWAP quantity are constants in `main()`:
 
 ```cpp
-const std::string FILENAME   = "orderbook.csv";
-const double      DEPTH_PCT  = 0.5;   // depth window: ±0.5% from mid
-const double      TARGET_QTY = 40.0;  // quantity for VWAP calculation
+const double DEPTH_PCT  = 0.5;   // depth window: ±0.5% from mid
+const double TARGET_QTY = 40.0;  // quantity for VWAP calculation
 ```
 
 ---
