@@ -35,12 +35,13 @@ Buy VWAP is always ≥ best ask. Sell VWAP is always ≤ best bid.
 
 ```
 CEX-ORDERBOOK_SPREAD-ANALYZER/
-├── build/                  — compiled output (generated, not committed)
+├── build/                        — compiled output (generated, not committed)
 ├── src/
-│   ├── main.cpp            — source code
-│   └── orderbook.csv       — sample data (12 orders)
+│   ├── main.cpp                  — analyzer source code
+│   ├── generate_orderbook.cpp    — CSV generator
+│   └── orderbook.csv             — sample data (12 orders)
 ├── .gitignore
-├── CMakeLists.txt          — build configuration
+├── CMakeLists.txt                — build configuration
 └── README.md
 ```
 
@@ -75,7 +76,8 @@ project(orderbook)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(orderbook src/main.cpp)
+add_executable(orderbook          src/main.cpp)
+add_executable(generate_orderbook src/generate_orderbook.cpp)
 ```
 
 ---
@@ -150,6 +152,35 @@ Walking asks from cheapest to most expensive:
 ```
 VWAP = 4023.60 / 40 = 100.59 ✓
 ```
+
+---
+
+## Orderbook Generator
+
+If you need custom test data, use the included CSV generator.
+
+After building the project, the `generate_orderbook` binary ends up in the `build/` directory — same place as the main `orderbook` binary. The generated CSV file is created **in the directory from which you run the command**, so make sure to run it from `build/` or provide a path pointing to `src/`:
+
+```bash
+# From the build/ directory:
+
+# Generate orderbook.csv right here in build/
+./generate_orderbook
+
+# Generate directly into src/ so the analyzer can find it by default
+./generate_orderbook ../src/orderbook.csv
+
+# Custom name, number of levels, and mid price
+./generate_orderbook ../src/my_data.csv 20 500.0
+```
+
+| Argument | Default | Description |
+|---|---|---|
+| filename | `orderbook.csv` | Output file path (relative to where you run the command) |
+| levels | `10` | Price levels per side |
+| mid price | `100.0` | Center price around which bids/asks are generated |
+
+Order sizes are randomized on each run. The generator always produces a valid orderbook — best bid is guaranteed to be below best ask.
 
 ---
 
