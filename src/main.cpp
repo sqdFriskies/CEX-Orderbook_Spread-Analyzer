@@ -24,10 +24,15 @@ struct Orderbook {
 };
 
 struct Stats {
-    double bestBid, bestAsk, midPrice;
-    double spread, spreadPct;
-    double bidDepth, askDepth;
-    double vwapBuy, vwapSell;
+    double bestBid;
+    double bestAsk;
+    double midPrice;
+    double spread;
+    double spreadPct;
+    double bidDepth;
+    double askDepth;
+    double vwapBuy;
+    double vwapSell;
 };
 
 std::string trim(const std::string& s) {
@@ -205,6 +210,7 @@ void printStats(const Stats& s, double depthPct, double targetQty) {
 }
 
 int main(int argc, const char * argv[]) {
+
     const std::string default_FILENAME = "orderbook.csv";
     std::string FILENAME = default_FILENAME;
     if(argc > 1){
