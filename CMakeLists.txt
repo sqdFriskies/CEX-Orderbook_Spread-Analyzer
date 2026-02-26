@@ -7,4 +7,5 @@ include_directories(include)
 
 file(GLOB SOURCES "src/*.cpp")
 
-add_executable(orderbook ${SOURCES})
+add_executable(orderbook          src/main.cpp)
+add_executable(generate_orderbook src/generate_orderbook.cpp)
